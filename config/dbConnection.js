@@ -1,3 +1,5 @@
+const mongoose = require('mongoose')
+
 mongoose
     .connect("mongodb+srv://" + process.env.DB_USER_PASS + "@gestion-suivi-marches.lctzovu.mongodb.net/gestion-suivi-marches", {
             useNewUrlParser: true,
