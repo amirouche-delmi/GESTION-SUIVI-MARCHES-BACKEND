@@ -6,8 +6,8 @@ mongoose
             useUnifiedTopology: true,
         })
         .then(() => {
-            console.log("Connected to MongoDB");
             mongoose.set('strictQuery', false);
+            console.log("Connected to MongoDB");
         }) 
     .catch((err) => console.log("Failed to connect to MongoDB", err))
 
