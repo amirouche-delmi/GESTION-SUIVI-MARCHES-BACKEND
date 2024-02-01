@@ -35,6 +35,10 @@ const utilisateurSchema = new mongoose.Schema({
         type: String, 
         required: true,
         enum: ['Admin', 'Gestionnaire', 'Observateur']
+    },
+    valide: { 
+        type: Boolean, 
+        default: false 
     }
 },
 {
