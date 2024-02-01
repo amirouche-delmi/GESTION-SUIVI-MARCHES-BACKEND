@@ -3,3 +3,7 @@ node_modules/
 
 # Environnement
 .env
+
+# Files
+updoads/attributionMarche
+updoads/cahierDesCharges
