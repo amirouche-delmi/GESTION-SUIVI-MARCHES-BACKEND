@@ -21,6 +21,7 @@ const app = express()
 
 const corsOptions = {
     // origin: process.env.CLIENT_URL,
+    origin: 'http://localhost:3000',
     credentials: true,
     allowedHeaders: ["sessionId", "Content-Type"],
     exposedHeaders: ["sessionId"],
@@ -28,7 +29,6 @@ const corsOptions = {
     preflightContinue: false,
 };
 app.use(cors(corsOptions));
-// app.use(cors({origin: process.env.CLIENT_URL}))
 
 // Utilisation des middlewares
 app.use(bodyParser.json()) // Middleware pour analyser les corps de requête au format JSON
