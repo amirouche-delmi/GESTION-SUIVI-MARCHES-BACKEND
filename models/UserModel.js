@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const { isEmail } = require('validator')
 const bcrypt = require('bcrypt')
 
-const utilisateurSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     nom: { 
         type: String, 
         required: true,
@@ -26,7 +26,7 @@ const utilisateurSchema = new mongoose.Schema({
         required: true,
         trim: true 
     },
-    motDePasse: { 
+    password: { 
         type: String, 
         required: true,
         minlength: 6 
@@ -45,6 +45,6 @@ const utilisateurSchema = new mongoose.Schema({
     timestamps: true
 })
 
-const UtilisateurModel = mongoose.model('utilisateur', utilisateurSchema)
+const UserModel = mongoose.model('user', userSchema)
 
-module.exports = UtilisateurModel
+module.exports = UserModel

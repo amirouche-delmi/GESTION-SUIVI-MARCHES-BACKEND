@@ -4,8 +4,8 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const path = require('path');
 
-const utilisateurRoutes = require('./routes/utilisateurRoutes')
-const { checkUtilisateur, requireAuth } = require('./middleware/authMiddleware')
+const userRoutes = require('./routes/userRoutes')
+const { checkUser, requireAuth } = require('./middleware/authMiddleware')
 const besoinRoutes = require('./routes/besoinRoutes')
 const validationPrealableRoutes = require('./routes/validationPrealableRoutes')
 const cahierDesChargesRoutes = require('./routes/cahierDesChargesRoutes')
@@ -36,14 +36,14 @@ app.use(bodyParser.urlencoded({ extended: true })) // Middleware pour analyser l
 app.use(cookieParser()) // Middleware pour analyser les cookies
 
 // Middleware pour vérifier l'utilisateur à chaque requête
-app.get('*', checkUtilisateur)
+app.get('*', checkUser)
 
 // Route pour récupérer l'ID de l'utilisateur à partir du jeton JWT
 app.get('/jwtid', requireAuth, (req, res) => {
-    res.status(200).send(res.locals.utilisateur._id)
+    res.status(200).send(res.locals.user._id)
 })
 
-app.use('/api/utilisateur', utilisateurRoutes)
+app.use('/api/user', userRoutes)
 app.use('/api/besoin', besoinRoutes)
 app.use('/api/validation-prealable', validationPrealableRoutes)
 app.use('/api/cahier-des-charges', cahierDesChargesRoutes)
