@@ -20,8 +20,7 @@ require('./config/dbConnection')
 const app = express()
 
 const corsOptions = {
-    // origin: process.env.CLIENT_URL,
-    origin: 'http://localhost:3000',
+    origin: process.env.CLIENT_URL,
     credentials: true,
     allowedHeaders: ["sessionId", "Content-Type"],
     exposedHeaders: ["sessionId"],
