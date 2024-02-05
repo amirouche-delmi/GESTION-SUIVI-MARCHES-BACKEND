@@ -31,7 +31,7 @@ module.exports.signIn = async (req, res) => {
             if (isMatch) {
                 const maxAge = 3 * 24 * 60 * 60 * 1000; // Durée maximale du cookie JWT : 3 jours
                 const token = jwt.sign({ userID: user._id }, process.env.TOKEN_SECRET, { expiresIn: maxAge }) // create token
-                res.cookie("jwt", token, { httpOnly: true, maxAge })
+                res.cookie("jwt", token, { httpOnly: true, secure: true, maxAge })
                 return res.status(200).json({ userID: user._id })
             }
             throw Error('password incorrect')

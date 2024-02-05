@@ -13,6 +13,11 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true 
     },
+    telephone: { 
+        type: String, 
+        required: true,
+        trim: true 
+    },
     email: { 
         type: String, 
         required: true,
@@ -20,11 +25,6 @@ const userSchema = new mongoose.Schema({
         lowercase: true, 
         unique: true, 
         trim: true
-    },
-    telephone: { 
-        type: String, 
-        required: true,
-        trim: true 
     },
     password: { 
         type: String, 
