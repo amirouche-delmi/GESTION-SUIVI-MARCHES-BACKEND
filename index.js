@@ -39,7 +39,7 @@ app.get('*', checkUser)
 
 // Route pour récupérer l'ID de l'utilisateur à partir du jeton JWT
 app.get('/jwtid', requireAuth, (req, res) => {
-    res.status(200).send(res.locals.user._id)
+        res.status(200).send(res.locals.user._id)
 })
 
 app.use('/api/user', userRoutes)
