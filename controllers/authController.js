@@ -16,7 +16,7 @@ module.exports.signUp = async (req, res) => {
         res.status(201).json({ userID: user._id })
     } catch (err) {
         const errors = signUpErrors(err)
-        res.status(500).json({ errors })
+        res.status(200).json({ errors })
     }
 };
 
@@ -29,10 +29,13 @@ module.exports.signIn = async (req, res) => {
         if (user) {
             const isMatch = await bcrypt.compare(password, user.password)
             if (isMatch) {
-                const maxAge = 3 * 24 * 60 * 60 * 1000; // Durée maximale du cookie JWT : 3 jours
-                const token = jwt.sign({ userID: user._id }, process.env.TOKEN_SECRET, { expiresIn: maxAge }) // create token
-                res.cookie("jwt", token, { httpOnly: true, secure: true, maxAge, sameSite: 'None' })
-                return res.status(200).json({ userID: user._id })
+                if (user.valide !== false) {
+                    const maxAge = 3 * 24 * 60 * 60 * 1000; // Durée maximale du cookie JWT : 3 jours
+                    const token = jwt.sign({ userID: user._id }, process.env.TOKEN_SECRET, { expiresIn: maxAge }) // create token
+                    res.cookie("jwt", token, { httpOnly: true, secure: true, maxAge, sameSite: 'None' })
+                    return res.status(200).json({ userID: user._id })
+                }
+                throw Error('compte invalide')
             }
             throw Error('password incorrect')
         }
