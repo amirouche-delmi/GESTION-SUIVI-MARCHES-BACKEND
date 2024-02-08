@@ -32,7 +32,7 @@ module.exports.signIn = async (req, res) => {
                 if (user.valide !== false) {
                     const maxAge = 3 * 24 * 60 * 60 * 1000; // Durée maximale du cookie JWT : 3 jours
                     const token = jwt.sign({ userID: user._id }, process.env.TOKEN_SECRET, { expiresIn: maxAge }) // create token
-                    res.cookie("jwt", token, { httpOnly: true, secure: true, maxAge, sameSite: 'None', domain: 'localhost' })
+                    res.cookie("jwt", token, { httpOnly: true, secure: true, maxAge, sameSite: 'None', domain: 'https://gestion-suivi-marches-backend.onrender.com' })
                     return res.status(200).json({ userID: user._id })
                 }
                 throw Error('compte invalide')
@@ -49,6 +49,6 @@ module.exports.signIn = async (req, res) => {
   
 module.exports.logout = (req, res) => {
     // res.cookie("jwt", "", { maxAge: 1 });
-    res.clearCookie('jwt', { domain: 'localhost' });
+    res.clearCookie('jwt', { domain: 'https://gestion-suivi-marches-backend.onrender.com' });
     res.redirect("/");
 };
