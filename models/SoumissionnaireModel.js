@@ -1,28 +1,30 @@
 const mongoose = require('mongoose')
+const { isEmail } = require('validator')
 
 const soumissionnaireSchema = new mongoose.Schema({
-    appelDOffreID: { 
-        type: String, 
-        required: true,
-        trim: true
-    },
     nom: { 
         type: String, 
         required: true,
+        minlength: 3,
         trim: true 
     },
-    resultatEvaluation: { 
+    email: { 
         type: String, 
         required: true,
+        validate: [isEmail],
+        lowercase: true, 
+        unique: true, 
         trim: true
     },
-    motifRejet: { 
+    telephone: { 
         type: String, 
         required: true,
+        minlength: 10,
+        maxlength: 10,
         trim: true 
     },
-    membresCommission: { 
-        type: [String], 
+    statut: { 
+        type: String, 
         required: true,
         trim: true
     }      

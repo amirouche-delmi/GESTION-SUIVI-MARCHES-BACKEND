@@ -1,11 +1,6 @@
 const mongoose = require('mongoose')
 
-const besoinSchema = new mongoose.Schema({
-    dmID: { 
-        type: String, 
-        required: true,
-        trim: true
-    },
+const dimBesoinSchema = new mongoose.Schema({
     intitule: { 
         type: String, 
         required: true,
@@ -33,12 +28,26 @@ const besoinSchema = new mongoose.Schema({
         type: String,
         required: true, 
         trim: true
-    }       
+    },
+    dateValidation: { 
+        type: Date, 
+        required: true, 
+    },
+    validePar: { 
+        type: [String], 
+        required: true,
+        trim: true
+    },
+    lienCahierDesDharges: { 
+        type: String,
+        required: true,
+        trim: true
+    }     
 },
 {
     timestamps: true
 })
 
-const BesoinModel = mongoose.model('besoin', besoinSchema)
+const DimBesoinModel = mongoose.model('dim-besoin', dimBesoinSchema)
 
-module.exports = BesoinModel
+module.exports = DimBesoinModel

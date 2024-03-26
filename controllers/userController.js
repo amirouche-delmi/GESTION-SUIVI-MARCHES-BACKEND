@@ -47,9 +47,9 @@ module.exports.updateUser = async (req, res) => {
             {
                 $set: {
                     nom: req.body.nom || user.nom,
-                    prenom: req.body.prenom || user.prenom,
-                    adresse: req.body.adresse || user.adresse,
+                    email: req.body.email || user.email,
                     telephone: req.body.telephone || user.telephone,
+                    adresse: req.body.adresse || user.adresse,
                 }
             },
             { new: true, upsert: true, setDefaultsOnInsert: true, select: "-password" }

@@ -1,14 +1,26 @@
 const ObjectID = require('mongoose').Types.ObjectId
+const MarcheModel = require('../models/MarcheModel');
 const ValidationPrealableModel = require('../models/ValidationPrealableModel')
 
 module.exports.createValidationPrealable = async (req, res) => {
     try {
-        const { besoinID, dateValidation, reservesRemarques, validePar } = req.body
+        const { marcheID, dmID, dateValidation, reservesRemarques, validePar } = req.body
     
-        if (!ObjectID.isValid(besoinID))
-            return res.status(400).json({ error: "Invalid BesoinID " + besoinID })
+        if (!ObjectID.isValid(marcheID))
+            return res.status(400).json({ error: "Invalid marcheID " + marcheID })
     
-        const validationPrealable = await ValidationPrealableModel.create({ besoinID, dateValidation, reservesRemarques, validePar })
+        const validationPrealable = await ValidationPrealableModel.create({ dmID, dateValidation, reservesRemarques, validePar })
+
+        const updatedMarche = await MarcheModel.findOneAndUpdate(
+            { _id: marcheID },
+            {
+                $set: { 
+                    validationPrealableID: validationPrealable._id,
+                    etape: 3
+                }
+            },
+            { new: true, upsert: true, setDefaultsOnInsert: true }
+        )
         
         res.status(201).json({ validationPrealableID: validationPrealable._id })
     } catch (err) {

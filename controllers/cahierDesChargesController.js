@@ -1,21 +1,23 @@
 const ObjectID = require('mongoose').Types.ObjectId
 const CahierDesChargesModel = require('../models/CahierDesChargesModel')
-const fs = require('fs')
+const fs = require('fs');
+const MarcheModel = require('../models/MarcheModel');
 
 module.exports.createCahierDesCharges = async (req, res) => {
     try {
-        const { besoinID, intitule, descriptionSuccincte, dateFinalisation, validePar, Participants } = req.body
+        const { marcheID, dmID, intitule, descriptionSuccincte, dateFinalisation, validePar, participants } = req.body
 
-        if (!ObjectID.isValid(besoinID))
-            return res.status(400).json({ error: "Invalid BesoinID " + besoinID })
+        if (!ObjectID.isValid(marcheID))
+            return res.status(400).json({ error: "Invalid marcheID " + marcheID })
 
         if (!req.file)
             return res.status(400).json({ error: "The CahierDesCharges file is not included" })
         else if (req.file.mimetype !== "application/pdf")
             return res.status(400).json({ error: "File format incompatible. Please upload a PDF file." })
-    
-        const cahierDesCharges = await CahierDesChargesModel.create({ besoinID, intitule, descriptionSuccincte, dateFinalisation, validePar, Participants, exemplaireNumerique: "The link will be added" })
-
+        
+        const participantsArray = JSON.parse(participants);
+        const cahierDesCharges = await CahierDesChargesModel.create({ dmID, intitule, descriptionSuccincte, dateFinalisation, validePar, participants: participantsArray, exemplaireNumerique: "The link will be added" })
+        
         let fileName = cahierDesCharges._id + ".pdf"
 
         await fs.promises.writeFile(
@@ -26,6 +28,17 @@ module.exports.createCahierDesCharges = async (req, res) => {
         await CahierDesChargesModel.findOneAndUpdate(
             { _id: cahierDesCharges._id },
             { $set: { exemplaireNumerique: `uploads/cahierDesCharges/${fileName}` } },
+            { new: true, upsert: true, setDefaultsOnInsert: true }
+        )
+
+        const updatedMarche = await MarcheModel.findOneAndUpdate(
+            { _id: marcheID },
+            {
+                $set: { 
+                    cahierDesChargesID: cahierDesCharges._id,
+                    etape: 4
+                }
+            },
             { new: true, upsert: true, setDefaultsOnInsert: true }
         )
  
@@ -74,9 +87,6 @@ module.exports.updateCahierDesCharges = async (req, res) => {
         if (!ObjectID.isValid(req.params.id))
             return res.status(400).json({ error: "Invalid ID " + req.params.id })
         
-        if (!ObjectID.isValid(req.body.besoinID))
-            return res.status(400).json({ error: "Invalid BesoinID " + req.body.besoinID })
-
         if (req.file && req.file.mimetype !== "application/pdf") 
             return res.status(400).json({ error: "File format incompatible. Please upload a PDF file." })
 
@@ -96,12 +106,11 @@ module.exports.updateCahierDesCharges = async (req, res) => {
             { _id: req.params.id },
             {
                 $set: { 
-                    besoinID: req.body.besoinID || cahierDesCharges.besoinID,
                     intitule: req.body.intitule || cahierDesCharges.intitule,
                     descriptionSuccincte: req.body.descriptionSuccincte || cahierDesCharges.descriptionSuccincte,
                     dateFinalisation: req.body.dateFinalisation || cahierDesCharges.dateFinalisation,
                     validePar: req.body.validePar || cahierDesCharges.validePar,
-                    Participants: req.body.Participants || cahierDesCharges.Participants,
+                    participants: JSON.parse(req.body.participants) || cahierDesCharges.participants,
                 }
             },
             { new: true, upsert: true, setDefaultsOnInsert: true }

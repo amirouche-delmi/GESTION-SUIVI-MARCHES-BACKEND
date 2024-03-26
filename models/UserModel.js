@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const { isEmail } = require('validator')
-const bcrypt = require('bcrypt')
 
 const userSchema = new mongoose.Schema({
     nom: { 
@@ -9,18 +8,12 @@ const userSchema = new mongoose.Schema({
         minlength: 3,
         trim: true
     },
-    prenom: { 
-        type: String, 
-        required: true,
-        minlength: 3,
-        trim: true 
-    },
     telephone: { 
         type: String, 
-        required: true,
         minlength: 10,
         maxlength: 10,
-        trim: true 
+        trim: true ,
+        default: ""
     },
     email: { 
         type: String, 
@@ -30,6 +23,11 @@ const userSchema = new mongoose.Schema({
         unique: true, 
         trim: true
     },
+    adresse: { 
+        type: String, 
+        trim: true,
+        default: "Alger | Algérie"
+    },
     password: { 
         type: String, 
         minlength: 6, 
@@ -38,7 +36,7 @@ const userSchema = new mongoose.Schema({
     role: { 
         type: String, 
         required: true,
-        enum: ['Admin', 'Gestionnaire', 'Observateur']
+        enum: ['Admin', 'DM', 'CCM']
     },
     valide: { 
         type: Boolean,

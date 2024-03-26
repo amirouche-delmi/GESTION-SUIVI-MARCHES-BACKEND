@@ -1,12 +1,9 @@
 // Fonction pour gérer les erreurs lors de l'inscription
 module.exports.signUpErrors = (err) => {
-    let errors = { nom: '', prenom: '', telephone: '', email: '', password: '', role: '' }
+    let errors = { nom: '', telephone: '', email: '', password: '', role: '' }
 
     if (err.message.includes("nom")) 
         errors.nom = "Le nom doit faire 3 caractères minimum";
-    
-    if (err.message.includes("prenom")) 
-        errors.prenom = "Le prenom doit faire 3 caractères minimum"
     
     if (err.message.includes("telephone")) 
         errors.telephone = "Le numéro du téléphone doit faire exactement 10";

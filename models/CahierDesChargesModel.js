@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const cahierDesChargesSchema = new mongoose.Schema({
-    besoinID: { 
+    dmID: { 
         type: String, 
         required: true,
         trim: true
@@ -25,7 +25,7 @@ const cahierDesChargesSchema = new mongoose.Schema({
         required: true, 
         trim: true
     },
-    Participants: { 
+    participants: { 
         type: [String], 
         required: true,
         trim: true       

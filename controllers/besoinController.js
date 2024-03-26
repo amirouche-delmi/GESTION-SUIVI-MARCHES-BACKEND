@@ -1,12 +1,24 @@
 const ObjectID = require('mongoose').Types.ObjectId
-const BesoinModel = require('../models/BesoinModel')
+const BesoinModel = require('../models/BesoinModel');
+const MarcheModel = require('../models/MarcheModel');
 
 module.exports.createBesoin = async (req, res) => {
     try {
-        const { intitule, description, dateExpression, objectifs, estimationCout, exprimePar } = req.body
+        const { marcheID, dmID, intitule, description, dateExpression, objectifs, estimationCout, exprimePar } = req.body
     
-        const besoin = await BesoinModel.create({ intitule, description, dateExpression, objectifs, estimationCout, exprimePar })
+        const besoin = await BesoinModel.create({ dmID, intitule, description, dateExpression, objectifs, estimationCout, exprimePar })
         
+        const updatedMarche = await MarcheModel.findOneAndUpdate(
+            { _id: marcheID },
+            {
+                $set: { 
+                    besoinID: besoin._id,
+                    etape: 2
+                }
+            },
+            { new: true, upsert: true, setDefaultsOnInsert: true }
+        )
+
         res.status(201).json({ besoinID: besoin._id })
     } catch (err) {
         return res.status(500).json({ 

@@ -4,17 +4,17 @@ const fs = require('fs')
 
 module.exports.createAttributionMarche = async (req, res) => {
     try {
-        const { soumissionnaireID, motifSelection } = req.body
+        const { marcheID, dmID, motifSelection } = req.body
 
-        if (!ObjectID.isValid(soumissionnaireID))
-            return res.status(400).json({ error: "Invalid soumissionnaireID " + soumissionnaireID })
+        if (!ObjectID.isValid(marcheID))
+            return res.status(400).json({ error: "Invalid marcheID " + marcheID })
 
         if (!req.file) 
             return res.status(400).json({ error: "The PVCommission file is not included" })
         else if (req.file.mimetype !== "application/pdf")
             return res.status(400).json({ error: "File format incompatible. Please upload a PDF file." })
     
-        const attributionMarche = await AttributionMarcheModel .create({ soumissionnaireID, motifSelection, PVCommission: "The link will be added" })
+        const attributionMarche = await AttributionMarcheModel .create({dmID, motifSelection, PVCommission: "The link will be added" })
         
         let fileName = attributionMarche._id + ".pdf"
     
@@ -26,6 +26,17 @@ module.exports.createAttributionMarche = async (req, res) => {
         await AttributionMarcheModel.findOneAndUpdate(
             { _id: attributionMarche._id },
             { $set: { PVCommission: `uploads/attributionMarche/${fileName}` } },
+            { new: true, upsert: true, setDefaultsOnInsert: true }
+        )
+
+        const updatedMarche = await MarcheModel.findOneAndUpdate(
+            { _id: marcheID },
+            {
+                $set: { 
+                    attributionMarcheID: attributionMarche._id,
+                    etape: 4
+                }
+            },
             { new: true, upsert: true, setDefaultsOnInsert: true }
         )
         
@@ -74,8 +85,8 @@ module.exports.updateAttributionMarche = async (req, res) => {
         if (!ObjectID.isValid(req.params.id))
             return res.status(400).json({ error: "Invalid ID " + req.params.id })
         
-        if (req.body.soumissionnaireID && !ObjectID.isValid(req.body.soumissionnaireID))
-            return res.status(400).json({ error: "Invalid soumissionnaireID " + req.body.soumissionnaireID })
+        if (req.body.offreID && !ObjectID.isValid(req.body.offreID))
+            return res.status(400).json({ error: "Invalid offreID " + req.body.offreID })
 
         if (req.file && req.file.mimetype !== "application/pdf") 
             return res.status(400).json({ error: "File format incompatible. Please upload a PDF file." })
@@ -96,7 +107,7 @@ module.exports.updateAttributionMarche = async (req, res) => {
             { _id: req.params.id },
             {
                 $set: { 
-                    soumissionnaireID: req.body.soumissionnaireID || attributionMarche.soumissionnaireID,
+                    offreID: req.body.offreID || attributionMarche.offreID,
                     motifSelection: req.body.motifSelection || attributionMarche.motifSelection,
                 }
             },

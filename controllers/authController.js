@@ -5,13 +5,15 @@ const jwt = require('jsonwebtoken')
 
 // l'inscription
 module.exports.signUp = async (req, res) => {
-    const { nom, prenom, email, telephone, password, role } = req.body
-
+    const { nom, email, password, role } = req.body
+    
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
     
     try {
-        const user = await UserModel.create({ nom, prenom, email, telephone, password: hashedPassword, role })
+        const user = await UserModel.create({ nom, email, password: hashedPassword, role })
+
+        console.log(user);
 
         res.status(201).json({ userID: user._id })
     } catch (err) {

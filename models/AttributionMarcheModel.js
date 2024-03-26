@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 
 const attributionMarcheSchema = new mongoose.Schema({
-    soumissionnaireID: { 
-        type: String,    
+    dmID: { 
+        type: String, 
         required: true,
         trim: true
     },

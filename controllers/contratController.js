@@ -3,12 +3,12 @@ const ContratModel = require('../models/ContratModel')
 
 module.exports.createContrat = async (req, res) => {
     try {
-        const { attributionMarcheID, delaiRealisation, observation, signePar } = req.body
+        const { dmID, attributionMarcheID, delaiRealisation, cout, statut, observation, signePar } = req.body
 
         if (!ObjectID.isValid(attributionMarcheID))
             return res.status(400).json({ error: "Invalid attributionMarcheID " + attributionMarcheID })
 
-        const contrat = await ContratModel.create({ attributionMarcheID, delaiRealisation, observation, signePar })
+        const contrat = await ContratModel.create({ dmID, attributionMarcheID, delaiRealisation, cout, statut, observation, signePar })
         
         res.status(201).json({ contratID: contrat._id })
     } catch (err) {
@@ -69,6 +69,8 @@ module.exports.updateContrat = async (req, res) => {
                 $set: { 
                     attributionMarcheID: req.body.attributionMarcheID || contrat.attributionMarcheID,
                     delaiRealisation: req.body.delaiRealisation || contrat.delaiRealisation,
+                    cout: req.body.cout || contrat.cout,
+                    statut: req.body.statut || contrat.statut,
                     observation: req.body.observation || contrat.observation,
                     signePar: req.body.signePar || contrat.signePar
                 }

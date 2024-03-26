@@ -1,14 +1,26 @@
 const ObjectID = require('mongoose').Types.ObjectId
-const AppelDOffreModel = require('../models/AppelDOffreModel')
+const AppelDOffreModel = require('../models/AppelDOffreModel');
+const MarcheModel = require('../models/MarcheModel');
 
 module.exports.createAppelDOffre = async (req, res) => {
     try {
-        const { cahierDesChargesID, dateLancement, mediasUtilises, redacteurs } = req.body
+        const { marcheID, dmID, dateLancement, dateCloture, mediasUtilises, redacteurs } = req.body
         
-        if (!ObjectID.isValid(cahierDesChargesID))
-            return res.status(400).json({ error: "Invalid cahierDesChargesID " + cahierDesChargesID })
+        if (!ObjectID.isValid(marcheID))
+            return res.status(400).json({ error: "Invalid marcheID " + marcheID })
  
-        const appelDOffre = await AppelDOffreModel.create({ cahierDesChargesID, dateLancement, mediasUtilises, redacteurs })
+        const appelDOffre = await AppelDOffreModel.create({ dmID, dateLancement, dateCloture, mediasUtilises, redacteurs })
+
+        const updatedMarche = await MarcheModel.findOneAndUpdate(
+            { _id: marcheID },
+            {
+                $set: { 
+                    appelDOffreID: appelDOffre._id,
+                    etape: 5
+                }
+            },
+            { new: true, upsert: true, setDefaultsOnInsert: true }
+        )
        
         res.status(201).json({ appelDOffreID: appelDOffre._id })
     } catch (err) {
@@ -54,9 +66,6 @@ module.exports.updateAppelDOffre = async (req, res) => {
     try {
         if (!ObjectID.isValid(req.params.id))
             return res.status(400).json({ error: "Invalid ID " + req.params.id })
-        
-        if (!ObjectID.isValid(req.body.cahierDesChargesID))
-            return res.status(400).json({ error: "Invalid cahierDesChargesID " + req.body.cahierDesChargesID })
 
         const appelDOffre = await AppelDOffreModel.findById(req.params.id)
 
@@ -67,8 +76,8 @@ module.exports.updateAppelDOffre = async (req, res) => {
             { _id: req.params.id },
             {
                 $set: { 
-                    cahierDesChargesID: req.body.cahierDesChargesID || appelDOffre.cahierDesChargesID,
                     dateLancement: req.body.dateLancement || appelDOffre.dateLancement,
+                    dateCloture: req.body.dateCloture || appelDOffre.dateCloture,
                     mediasUtilises: req.body.mediasUtilises || appelDOffre.mediasUtilises,
                     redacteurs: req.body.redacteurs || appelDOffre.redacteurs
                 }

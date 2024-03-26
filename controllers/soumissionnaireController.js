@@ -3,12 +3,9 @@ const SoumissionnaireModel = require('../models/SoumissionnaireModel')
 
 module.exports.createSoumissionnaire = async (req, res) => {
     try {
-        const { appelDOffreID, nom, resultatEvaluation, motifRejet, membresCommission } = req.body
+        const { nom, email, telephone, statut } = req.body
         
-        if (!ObjectID.isValid(appelDOffreID))
-            return res.status(400).json({ error: "Invalid appelDOffreID " + appelDOffreID })
-        
-        const soumissionnaire = await SoumissionnaireModel.create({ appelDOffreID, nom, resultatEvaluation, motifRejet, membresCommission })
+        const soumissionnaire = await SoumissionnaireModel.create({ nom, email, telephone, statut })
         
         res.status(201).json({ soumissionnaireID: soumissionnaire._id })
     } catch (err) {
@@ -55,9 +52,6 @@ module.exports.updateSoumissionnaire = async (req, res) => {
         if (!ObjectID.isValid(req.params.id))
             return res.status(400).json({ error: "Invalid ID " + req.params.id })
 
-        if (req.body.appelDOffreID && !ObjectID.isValid(req.body.appelDOffreID))
-            return res.status(400).json({ error: "Invalid appelDOffreID " + req.body.appelDOffreID })
-
         const soumissionnaire = await SoumissionnaireModel.findById(req.params.id)
 
         if (!soumissionnaire)
@@ -67,11 +61,10 @@ module.exports.updateSoumissionnaire = async (req, res) => {
             { _id: req.params.id },
             {
                 $set: { 
-                    appelDOffreID: req.body.appelDOffreID || soumissionnaire.appelDOffreID,
                     nom: req.body.nom || soumissionnaire.nom,
-                    resultatEvaluation: req.body.resultatEvaluation || soumissionnaire.resultatEvaluation,
-                    motifRejet: req.body.motifRejet || soumissionnaire.motifRejet,
-                    membresCommission: req.body.membresCommission || soumissionnaire.membresCommission,
+                    email: req.body.email || soumissionnaire.email,
+                    telephone: req.body.telephone || soumissionnaire.telephone,
+                    statut: req.body.statut || soumissionnaire.statut,
                 }
             },
             { new: true, upsert: true, setDefaultsOnInsert: true }

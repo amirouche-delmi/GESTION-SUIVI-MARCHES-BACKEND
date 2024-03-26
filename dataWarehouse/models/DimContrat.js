@@ -1,16 +1,6 @@
 const mongoose = require('mongoose')
 
-const contratSchema = new mongoose.Schema({
-    dmID: { 
-        type: String, 
-        required: true,
-        trim: true
-    },
-    attributionMarcheID: { 
-        type: String, 
-        required: true,
-        trim: true
-    },
+const dimContratSchema = new mongoose.Schema({
     delaiRealisation: { 
         type: String, 
         required: true,
@@ -18,12 +8,12 @@ const contratSchema = new mongoose.Schema({
     },
     cout: { 
         type: Number, 
-        required: true
+        required: true,
     },
     statut: { 
         type: String, 
         required: true,
-        enum: ["actif", "terminé", "annulé"]
+        enum: ["actif", "terminé", "annulé"] 
     },
     observation: { 
         type: String, 
@@ -34,12 +24,12 @@ const contratSchema = new mongoose.Schema({
         type: [String],
         required: true, 
         trim: true
-    }       
+    }         
 },
 {
     timestamps: true
 })
 
-const ContratModel = mongoose.model('contrat', contratSchema)
+const DimContratModel = mongoose.model('dim-contrat', dimContratSchema)
 
-module.exports = ContratModel
+module.exports = DimContratModel

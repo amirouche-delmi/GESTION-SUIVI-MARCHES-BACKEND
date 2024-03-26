@@ -1,11 +1,6 @@
 const mongoose = require('mongoose')
 
-const appelDOffreSchema = new mongoose.Schema({
-    dmID: { 
-        type: String, 
-        required: true,
-        trim: true
-    },
+const dimAppelDOffreSchema = new mongoose.Schema({
     dateLancement: { 
         type: Date, 
         required: true,
@@ -19,7 +14,7 @@ const appelDOffreSchema = new mongoose.Schema({
         required: true,
         trim: true 
     },
-    redacteurs: {
+    redacteurs: { 
         type: [String],
         required: true, 
         trim: true
@@ -29,7 +24,6 @@ const appelDOffreSchema = new mongoose.Schema({
     timestamps: true
 })
 
-const AppelDOffreModel = mongoose.model('appel-d-offre', appelDOffreSchema)
+const DimAppelDOffreModel = mongoose.model('dim-appel-d-offre', dimAppelDOffreSchema)
 
-module.exports = AppelDOffreModel
-
+module.exports = DimAppelDOffreModel;
