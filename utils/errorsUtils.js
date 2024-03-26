@@ -5,8 +5,8 @@ module.exports.signUpErrors = (err) => {
     if (err.message.includes("nom")) 
         errors.nom = "Le nom doit faire 3 caractères minimum";
     
-    if (err.message.includes("telephone")) 
-        errors.telephone = "Le numéro du téléphone doit faire exactement 10";
+    // if (err.message.includes("telephone")) 
+    //     errors.telephone = "Le numéro du téléphone doit faire exactement 10";
 
     if (err.message.includes("email")) 
         errors.email = "Email incorrect"

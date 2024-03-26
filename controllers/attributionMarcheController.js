@@ -4,7 +4,7 @@ const fs = require('fs')
 
 module.exports.createAttributionMarche = async (req, res) => {
     try {
-        const { marcheID, dmID, motifSelection } = req.body
+        const { marcheID, dmID, commentaires } = req.body
 
         if (!ObjectID.isValid(marcheID))
             return res.status(400).json({ error: "Invalid marcheID " + marcheID })
@@ -14,7 +14,7 @@ module.exports.createAttributionMarche = async (req, res) => {
         else if (req.file.mimetype !== "application/pdf")
             return res.status(400).json({ error: "File format incompatible. Please upload a PDF file." })
     
-        const attributionMarche = await AttributionMarcheModel .create({dmID, motifSelection, PVCommission: "The link will be added" })
+        const attributionMarche = await AttributionMarcheModel .create({dmID, commentaires, PVCommission: "The link will be added" })
         
         let fileName = attributionMarche._id + ".pdf"
     
@@ -33,8 +33,7 @@ module.exports.createAttributionMarche = async (req, res) => {
             { _id: marcheID },
             {
                 $set: { 
-                    attributionMarcheID: attributionMarche._id,
-                    etape: 4
+                    attributionMarcheID: attributionMarche._id
                 }
             },
             { new: true, upsert: true, setDefaultsOnInsert: true }
@@ -84,9 +83,6 @@ module.exports.updateAttributionMarche = async (req, res) => {
     try {
         if (!ObjectID.isValid(req.params.id))
             return res.status(400).json({ error: "Invalid ID " + req.params.id })
-        
-        if (req.body.offreID && !ObjectID.isValid(req.body.offreID))
-            return res.status(400).json({ error: "Invalid offreID " + req.body.offreID })
 
         if (req.file && req.file.mimetype !== "application/pdf") 
             return res.status(400).json({ error: "File format incompatible. Please upload a PDF file." })
@@ -107,8 +103,7 @@ module.exports.updateAttributionMarche = async (req, res) => {
             { _id: req.params.id },
             {
                 $set: { 
-                    offreID: req.body.offreID || attributionMarche.offreID,
-                    motifSelection: req.body.motifSelection || attributionMarche.motifSelection,
+                    commentaires: req.body.commentaires || attributionMarche.commentaires,
                 }
             },
             { new: true, upsert: true, setDefaultsOnInsert: true }

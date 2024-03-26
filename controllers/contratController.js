@@ -3,7 +3,7 @@ const ContratModel = require('../models/ContratModel')
 
 module.exports.createContrat = async (req, res) => {
     try {
-        const { dmID, attributionMarcheID, delaiRealisation, cout, statut, observation, signePar } = req.body
+        const { dmID, delaiRealisation, cout, statut, observation, signePar } = req.body
 
         if (!ObjectID.isValid(attributionMarcheID))
             return res.status(400).json({ error: "Invalid attributionMarcheID " + attributionMarcheID })

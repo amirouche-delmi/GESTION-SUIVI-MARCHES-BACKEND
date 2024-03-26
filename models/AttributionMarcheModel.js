@@ -6,9 +6,8 @@ const attributionMarcheSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    motifSelection: { 
+    commentaires: { 
         type: String, 
-        required: true,
         trim: true 
     },
     PVCommission: { 
