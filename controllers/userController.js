@@ -50,6 +50,7 @@ module.exports.updateUser = async (req, res) => {
                     email: req.body.email || user.email,
                     telephone: req.body.telephone || user.telephone,
                     adresse: req.body.adresse || user.adresse,
+                    valide: req.body.valide,
                 }
             },
             { new: true, upsert: true, setDefaultsOnInsert: true, select: "-password" }
