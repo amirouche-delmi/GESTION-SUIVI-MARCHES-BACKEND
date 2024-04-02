@@ -2,12 +2,10 @@ const mongoose = require('mongoose')
 
 const dimAppelDOffreSchema = new mongoose.Schema({
     dateLancement: { 
-        type: Date, 
-        required: true,
+        type: String
     },
     dateCloture: { 
-        type: Date, 
-        required: true,
+        type: String
     },
     mediasUtilises: { 
         type: [String], 
@@ -18,10 +16,10 @@ const dimAppelDOffreSchema = new mongoose.Schema({
         type: [String],
         required: true, 
         trim: true
+    },
+    dateCreation: {
+        type: String
     }       
-},
-{
-    timestamps: true
 })
 
 const DimAppelDOffreModel = mongoose.model('dim-appel-d-offre', dimAppelDOffreSchema)

@@ -88,18 +88,8 @@ module.exports.updateMarche = async (req, res) => {
     }
 };
 
-module.exports.deleteMarche = async (req, res) => {
+module.exports.deleteMarcheLogic = async (marche) => {
     try {
-        if (!ObjectID.isValid(req.params.id))
-            return res.status(400).json({ error: "Invalid ID " + req.params.id })
-
-        const marche = await MarcheModel.findById(req.params.id)
-
-        if (!marche)
-            return res.status(404).json({ error: "Marche not found" })
-        
-        // une logique de supprission 
-        
         const handleDelete = async (type, model, filter) => {
             try {
                 if (type === 'deleteOne') {
@@ -112,29 +102,41 @@ module.exports.deleteMarche = async (req, res) => {
             }
         };
         
-        try {
-            await handleDelete('deleteOne', BesoinModel, { _id: marche.besoinID });
-            await handleDelete('deleteOne', ValidationPrealableModel, { _id: marche.validationPrealableID });
-            await handleDelete('deleteOne', CahierDesChargesModel, { _id: marche.cahierDesChargesID });
-            await handleDelete('deleteOne', AppelDOffreModel, { _id: marche.appelDOffreID });
+        await handleDelete('deleteOne', BesoinModel, { _id: marche.besoinID });
+        await handleDelete('deleteOne', ValidationPrealableModel, { _id: marche.validationPrealableID });
+        await handleDelete('deleteOne', CahierDesChargesModel, { _id: marche.cahierDesChargesID });
+        await handleDelete('deleteOne', AppelDOffreModel, { _id: marche.appelDOffreID });
         
-            const offres = await OffreModel.find({ marcheID: marche._id });
-            for (const offre of offres) {
-                const soumissionnaireCount = await OffreModel.countDocuments({ soumissionnaireID: offre.soumissionnaireID });
-        
-                if (soumissionnaireCount === 1) {
-                    await handleDelete('deleteOne', SoumissionnaireModel, { _id: offre.soumissionnaireID });
-                }
-        
-                await handleDelete('deleteOne', OffreModel, { _id: offre._id });
+        const offres = await OffreModel.find({ marcheID: marche._id });
+        for (const offre of offres) {
+            const soumissionnaireCount = await OffreModel.countDocuments({ soumissionnaireID: offre.soumissionnaireID });
+    
+            if (soumissionnaireCount === 1) {
+                await handleDelete('deleteOne', SoumissionnaireModel, { _id: offre.soumissionnaireID });
             }
+    
+            await handleDelete('deleteOne', OffreModel, { _id: offre._id });
+        }
+    
+        await handleDelete('deleteOne', AttributionMarcheModel, { _id: marche.attributionMarcheID });
+        await handleDelete('deleteOne', ContratModel, { _id: marche.contratID });
+        await handleDelete('deleteOne', MarcheModel, { _id: marche._id });
+    } catch (error) {
+        console.error("Une erreur s'est produite lors de la suppression :", error);
+    }        
+};
+
+module.exports.deleteMarche = async (req, res) => {
+    try {
+        if (!ObjectID.isValid(req.params.id))
+            return res.status(400).json({ error: "Invalid ID " + req.params.id })
+
+        const marche = await MarcheModel.findById(req.params.id)
+
+        if (!marche)
+            return res.status(404).json({ error: "Marche not found" })
         
-            await handleDelete('deleteOne', AttributionMarcheModel, { _id: marche.attributionMarcheID });
-            await handleDelete('deleteOne', ContratModel, { _id: marche.contratID });
-            await handleDelete('deleteOne', MarcheModel, { _id: marche._id });
-        } catch (error) {
-            console.error("Une erreur s'est produite lors de la suppression :", error);
-        }        
+        await deleteMarcheLogic(marche);
 
         res.status(200).json({ message: "Successfully deleted" })
     } catch (err) {
@@ -144,3 +146,6 @@ module.exports.deleteMarche = async (req, res) => {
         })
     }
 };
+
+
+

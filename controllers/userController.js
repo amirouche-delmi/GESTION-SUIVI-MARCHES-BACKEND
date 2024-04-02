@@ -1,5 +1,7 @@
 const ObjectID = require('mongoose').Types.ObjectId
-const UserModel = require('../models/UserModel')
+const MarcheModel = require('../models/MarcheModel');
+const UserModel = require('../models/UserModel');
+const { deleteMarcheLogic } = require('./marcheController');
 
 module.exports.getAllUser = async (req, res) => {
     try {
@@ -74,6 +76,14 @@ module.exports.deleteUser = async (req, res) => {
         
         if (!user)
             return res.status(404).json({ error: "User not found" })
+
+        // Récupérer tous les marchés créés par cet utilisateur
+        const marches = await MarcheModel.find({ dmID: req.params.id });
+
+        // Supprimer tous les marchés créés par cet utilisateur
+        await Promise.all(marches.map(async (marche) => {
+            await deleteMarcheLogic(marche);
+        }));        
 
         await UserModel.deleteOne({ _id: req.params.id })
         

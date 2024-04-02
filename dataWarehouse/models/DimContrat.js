@@ -24,10 +24,10 @@ const dimContratSchema = new mongoose.Schema({
         type: [String],
         required: true, 
         trim: true
-    }         
-},
-{
-    timestamps: true
+    },
+    dateCreation: {
+        type: String
+    }        
 })
 
 const DimContratModel = mongoose.model('dim-contrat', dimContratSchema)

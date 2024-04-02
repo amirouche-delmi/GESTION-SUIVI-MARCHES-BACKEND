@@ -48,10 +48,10 @@ const dimOffreSchema = new mongoose.Schema({
         type: [String], 
         required: true,
         trim: true
+    },
+    dateCreation: {
+        type: String
     }      
-},
-{
-    timestamps: true
 })
 
 const DimOffreModel = mongoose.model('dim-offre', dimOffreSchema)
