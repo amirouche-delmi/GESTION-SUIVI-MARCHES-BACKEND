@@ -31,7 +31,7 @@ router.get('/', async (req, res) => {
 
         const fillDimTempsTable = async () => {
             try {
-                const startDate = new Date('2024-01-01');
+                const startDate = new Date('2023-01-01');
                 const endDate = new Date();
                 
                 const addDays = (date, days) => {

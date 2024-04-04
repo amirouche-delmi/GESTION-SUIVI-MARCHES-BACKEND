@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
     role: { 
         type: String, 
         required: true,
-        enum: ['Admin', 'DM', 'CCM']
+        enum: ['Admin', 'DM', 'CEO']
     },
     valide: { 
         type: Boolean,
