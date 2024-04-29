@@ -6,7 +6,7 @@ const attributionMarcheSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    commentaires: { 
+    commentaire: { 
         type: String, 
         trim: true 
     },

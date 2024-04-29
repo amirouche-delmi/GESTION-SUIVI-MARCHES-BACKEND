@@ -6,11 +6,6 @@ const contratSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    attributionMarcheID: { 
-        type: String, 
-        required: true,
-        trim: true
-    },
     delaiRealisation: { 
         type: String, 
         required: true,
@@ -23,7 +18,7 @@ const contratSchema = new mongoose.Schema({
     statut: { 
         type: String, 
         required: true,
-        enum: ["actif", "terminé", "annulé"]
+        enum: ["En cours", "Terminé", "Annulé"]
     },
     observation: { 
         type: String, 

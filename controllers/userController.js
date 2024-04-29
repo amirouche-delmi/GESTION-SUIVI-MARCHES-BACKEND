@@ -1,7 +1,7 @@
 const ObjectID = require('mongoose').Types.ObjectId
 const MarcheModel = require('../models/MarcheModel');
 const UserModel = require('../models/UserModel');
-const { deleteMarcheLogic } = require('./marcheController');
+const { deleteMarcheLogic } = require('../utils/deleteMarcheUtils');
 
 module.exports.getAllUser = async (req, res) => {
     try {

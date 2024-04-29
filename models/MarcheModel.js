@@ -36,14 +36,6 @@ const marcheSchema = new mongoose.Schema({
         type: String, 
         trim: true
     },
-    soumissionnaireID: { 
-        type: String, 
-        trim: true
-    },
-    offreID: { 
-        type: String, 
-        trim: true
-    },
     attributionMarcheID: { 
         type: String, 
         trim: true

@@ -1,10 +1,13 @@
 const ObjectID = require('mongoose').Types.ObjectId
 const AttributionMarcheModel = require('../models/AttributionMarcheModel')
-const fs = require('fs')
+const fs = require('fs');
+const MarcheModel = require('../models/MarcheModel');
 
 module.exports.createAttributionMarche = async (req, res) => {
     try {
-        const { marcheID, dmID, commentaires } = req.body
+        const { marcheID, dmID, commentaire } = req.body
+
+        console.log({ marcheID, dmID, commentaire });
 
         if (!ObjectID.isValid(marcheID))
             return res.status(400).json({ error: "Invalid marcheID " + marcheID })
@@ -14,7 +17,7 @@ module.exports.createAttributionMarche = async (req, res) => {
         else if (req.file.mimetype !== "application/pdf")
             return res.status(400).json({ error: "File format incompatible. Please upload a PDF file." })
     
-        const attributionMarche = await AttributionMarcheModel .create({dmID, commentaires, PVCommission: "The link will be added" })
+        const attributionMarche = await AttributionMarcheModel.create({dmID, commentaire, PVCommission: "The link will be added" })
         
         let fileName = attributionMarche._id + ".pdf"
     
@@ -103,7 +106,7 @@ module.exports.updateAttributionMarche = async (req, res) => {
             { _id: req.params.id },
             {
                 $set: { 
-                    commentaires: req.body.commentaires || attributionMarche.commentaires,
+                    commentaire: req.body.commentaire,
                 }
             },
             { new: true, upsert: true, setDefaultsOnInsert: true }

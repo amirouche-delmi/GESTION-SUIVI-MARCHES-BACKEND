@@ -20,9 +20,25 @@ const offreSchema = new mongoose.Schema({
         type: String, 
         required: true,
         trim: true 
+    },    
+    noteConformite: { 
+        type: Number, 
+    },
+    noteCout: { 
+        type: Number, 
+    },
+    noteExperience: { 
+        type: Number, 
+    },
+    noteInnovation: { 
+        type: Number, 
     },
     noteObtenue: { 
         type: Number, 
+    },
+    membresCommission: { 
+        type: [String], 
+        trim: true
     },
     resultatEvaluation: { 
         type: String, 
@@ -31,11 +47,7 @@ const offreSchema = new mongoose.Schema({
     motif: { 
         type: String, 
         trim: true 
-    },
-    membresCommission: { 
-        type: [String], 
-        trim: true
-    }      
+    }     
 },
 {
     timestamps: true

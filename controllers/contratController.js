@@ -1,14 +1,28 @@
 const ObjectID = require('mongoose').Types.ObjectId
-const ContratModel = require('../models/ContratModel')
+const ContratModel = require('../models/ContratModel');
+const MarcheModel = require('../models/MarcheModel');
 
 module.exports.createContrat = async (req, res) => {
     try {
-        const { dmID, delaiRealisation, cout, statut, observation, signePar } = req.body
+        const { marcheID, dmID, delaiRealisation, cout, statut, observation, signePar } = req.body
 
-        if (!ObjectID.isValid(attributionMarcheID))
-            return res.status(400).json({ error: "Invalid attributionMarcheID " + attributionMarcheID })
+        if (!ObjectID.isValid(marcheID))
+            return res.status(400).json({ error: "Invalid marcheID " + marcheID })
+        if (!ObjectID.isValid(dmID))
+            return res.status(400).json({ error: "Invalid dmID " + dmID })
 
-        const contrat = await ContratModel.create({ dmID, attributionMarcheID, delaiRealisation, cout, statut, observation, signePar })
+        const contrat = await ContratModel.create({ dmID, delaiRealisation, cout, statut, observation, signePar })
+
+        const updatedMarche = await MarcheModel.findOneAndUpdate(
+            { _id: marcheID },
+            {
+                $set: { 
+                    contratID: contrat._id,
+                    etape: 9
+                }
+            },
+            { new: true, upsert: true, setDefaultsOnInsert: true }
+        )
         
         res.status(201).json({ contratID: contrat._id })
     } catch (err) {

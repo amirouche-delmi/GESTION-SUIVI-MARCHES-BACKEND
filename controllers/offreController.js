@@ -32,15 +32,15 @@ module.exports.createOffre = async (req, res) => {
         if(!offre) {
             offre = await OffreModel.create({ dmID, soumissionnaireID : soumissionnaire._id, marcheID, detailsProposition })
             
-            const updatedMarche = await MarcheModel.findOneAndUpdate(
-                { _id: marcheID },
-                {
-                    $set: { 
-                        etape: 6
-                    }
-                },
-                { new: true, upsert: true, setDefaultsOnInsert: true }
-            )
+            // const updatedMarche = await MarcheModel.findOneAndUpdate(
+            //     { _id: marcheID },
+            //     {
+            //         $set: { 
+            //             etape: 6
+            //         }
+            //     },
+            //     { new: true, upsert: true, setDefaultsOnInsert: true }
+            // )
             res.status(201).json({ offreID: offre._id })
         } else {
             res.status(400).json({ offreID: offre._id })
@@ -93,16 +93,32 @@ module.exports.updateOffre = async (req, res) => {
 
         if (!offre)
             return res.status(404).json({ error: "Offre not found" })
+        
+        let noteClacule = 0; 
+        if (
+            req.body.noteConformite && 
+            req.body.noteCout && 
+            req.body.noteExperience && 
+            req.body.noteInnovation
+        ) {
+            noteClacule = (req.body.noteConformite*4 + req.body.noteCout*3 + req.body.noteExperience*2 + req.body.noteInnovation*1) / 10;                      
+        }
 
         const updatedOffre = await OffreModel.findOneAndUpdate(
             { _id: req.params.id },
             {
                 $set: { 
                     detailsProposition: req.body.detailsProposition || offre.detailsProposition,
-                    noteObtenue: req.body.noteObtenue || offre.noteObtenue,
+                    
+                    noteConformite: req.body.noteConformite || offre.noteConformite,
+                    noteCout: req.body.noteCout || offre.noteCout,
+                    noteExperience: req.body.noteExperience || offre.noteExperience,
+                    noteInnovation: req.body.noteInnovation || offre.noteInnovation,
+                    noteObtenue: noteClacule != 0 ? noteClacule : offre.noteObtenue,
+                    membresCommission: req.body.membresCommission || offre.membresCommission,    
+                    
                     resultatEvaluation: req.body.resultatEvaluation || offre.resultatEvaluation,
                     motif: req.body.motif || offre.motif,
-                    membresCommission: req.body.membresCommission || offre.membresCommission,
                 }
             },
             { new: true, upsert: true, setDefaultsOnInsert: true }
