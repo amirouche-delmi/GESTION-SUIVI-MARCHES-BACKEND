@@ -1,23 +1,15 @@
 const ObjectID = require('mongoose').Types.ObjectId
 const MarcheModel = require('../models/MarcheModel')
-const BesoinModel = require('../models/BesoinModel')
-const ValidationPrealableModel = require('../models/ValidationPrealableModel')
-const CahierDesChargesModel = require('../models/CahierDesChargesModel')
-const AppelDOffreModel = require('../models/AppelDOffreModel')
-const SoumissionnaireModel = require('../models/SoumissionnaireModel')
-const OffreModel = require('../models/OffreModel')
-const AttributionMarcheModel = require('../models/AttributionMarcheModel')
-const ContratModel = require('../models/ContratModel')
 const { deleteMarcheLogic } = require('../utils/deleteMarcheUtils')
 
 module.exports.createMarche = async (req, res) => {
     try {
-        const { dmID, intitule, description } = req.body
+        const { dmID, ceoID, intitule, description } = req.body
 
         if (!ObjectID.isValid(dmID))
             return res.status(400).json({ error: "Invalid dmID " +  dmID})
     
-        const marche = await MarcheModel.create({ dmID, intitule, description })
+        const marche = await MarcheModel.create({ dmID, ceoID, intitule, description })
         
         res.status(201).json({ marcheID: marche._id })
     } catch (err) {
@@ -75,6 +67,7 @@ module.exports.updateMarche = async (req, res) => {
                 $set: { 
                     intitule: req.body.intitule || marche.intitule,
                     description: req.body.description || marche.description,
+                    ceoID: req.body.ceoID || marche.ceoID,
                     etape: req.body.etape || marche.etape
                 }
             },

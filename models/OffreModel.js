@@ -21,17 +21,12 @@ const offreSchema = new mongoose.Schema({
         required: true,
         trim: true 
     },    
-    noteConformite: { 
-        type: Number, 
-    },
-    noteCout: { 
-        type: Number, 
-    },
-    noteExperience: { 
-        type: Number, 
-    },
-    noteInnovation: { 
-        type: Number, 
+    criteres: {
+        type: [{
+            nom: {type: String}, 
+            note: {type: Number}, 
+            poids: {type: Number}, 
+        }]
     },
     noteObtenue: { 
         type: Number, 

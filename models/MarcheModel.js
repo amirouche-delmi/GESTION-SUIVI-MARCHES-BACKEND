@@ -6,6 +6,10 @@ const marcheSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    ceoID: { 
+        type: String, 
+        trim: true
+    },
     intitule: { 
         type: String, 
         required: true,
