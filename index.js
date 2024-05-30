@@ -17,6 +17,9 @@ const attributionMarcheRoutes = require('./routes/attributionMarcheRoutes')
 const contratRoutes = require('./routes/contratRoutes');
 const roomRoutes = require('./routes/roomRoutes');
 const fillDataWarehouse = require('./dataWarehouse/fillDataWarehouse');
+const dataWarehouse = require('./dataWarehouse/dataWarehouse');
+const dimOffre = require('./dataWarehouse/dimOffre');
+const dimAppelDOffre = require('./dataWarehouse/dimAppelDOffre');
 const email = require('./email/email');
 
 require('dotenv').config()
@@ -62,6 +65,9 @@ app.use('/api/room', roomRoutes)
 app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/fill-data-warehouse', fillDataWarehouse)
+app.use('/api/data-warehouse', dataWarehouse)
+app.use('/api/dim-offre', dimOffre)
+app.use('/api/dim-appel-d-offre', dimAppelDOffre)
 
 app.use('/api/email', email)
 

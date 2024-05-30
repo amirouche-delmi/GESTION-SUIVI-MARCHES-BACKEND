@@ -1,10 +1,5 @@
 const router = require('express').Router()
 
-const BesoinModel = require('../models/BesoinModel');
-const ValidationPrealableModel = require('../models/ValidationPrealableModel');
-const CahierDesChargesModel = require('../models/CahierDesChargesModel');
-const DimBesoinModel = require('./models/DimBesoinModel');
-
 const AppelDOffreModel = require('../models/AppelDOffreModel');
 const DimAppelDOffreModel = require('./models/DimAppelDOffreModel');
 
@@ -14,22 +9,25 @@ const DimOffreModel = require('./models/DimOffreModel');
 
 const ContratModel = require('../models/ContratModel');
 const DimContratModel = require('./models/DimContrat');
+
 const DimTempsModel = require('./models/DimTempsModel');
-const FaitMarcheModel = require('./models/FaitMarcheModel');
+
 const MarcheModel = require('../models/MarcheModel');
+const FaitMarcheModel = require('./models/FaitMarcheModel');
+const { findTempsID, calculerDelaiSoumissionOffres, calculerMoyenneCoutPropose, calculerNoteMoyenneOffres } = require('./utils/utils');
 
 
 router.get('/', async (req, res) => {
     try {
 
         await DimTempsModel.deleteMany();
-        await DimBesoinModel.deleteMany();
         await DimAppelDOffreModel.deleteMany();
         await DimOffreModel.deleteMany();
         await DimContratModel.deleteMany();
         await FaitMarcheModel.deleteMany();
 
-        const fillDimTempsTable = async () => {
+        // --------------- Le remplissage de la table dim-temps ---------------
+        const fillDimTemps = async () => {
             try {
                 const startDate = new Date('2023-01-01');
                 const endDate = new Date();
@@ -49,134 +47,105 @@ router.get('/', async (req, res) => {
                 
                 await DimTempsModel.insertMany(datesToInsert);
                 
-                console.log('Dates inserted successfully');
             } catch (error) {
-                console.error('Error inserting dates:', error);
+                console.error('Error inserting dates : ', error);
             }
         };
-        fillDimTempsTable();
-
-        const findDimTempsId = async (date) => {
-            try {
-                const formattedDate = new Date(date);
-                formattedDate.setHours(0, 0, 0, 0);
-        
-                const dimTemps = await DimTempsModel.findOne({ date: { $gte: formattedDate, $lt: new Date(formattedDate.getTime() + 24 * 60 * 60 * 1000) } });
-                return dimTemps ? dimTemps._id : null;
-            } catch (error) {
-                console.error('Error finding DimTempsId:', error);
-                return null;
-            }
-        };
-        
+        fillDimTemps();
+   
         const marches = await MarcheModel.find();
 
         await Promise.all(marches.map(async (marche) => {
-            let NewBesoin, NewAppel, NewOffre, NewContrat;
+            let NewAppel, offres, NewContrat;
 
             // ----------------------------------------------------------
-            if (marche.etape >= 4) {
-                const besoin = await BesoinModel.findById(marche.besoinID);
-                const validation = await ValidationPrealableModel.findById(marche.validationPrealableID);
-                const cahier = await CahierDesChargesModel.findById(marche.cahierDesChargesID);
-    
-                const dateExpressionBesoinId = await findDimTempsId(besoin.dateExpression);
-                const dateValidationBesoinId = await findDimTempsId(validation.dateValidation);
-                const dateCreationBesoinId = await findDimTempsId(besoin.createdAt);
-     
-                const newBesoin = {
-                    intitule: besoin.intitule,
-                    description: besoin.description,
-                    dateExpression: dateExpressionBesoinId,
-                    objectifs: besoin.objectifs,
-                    estimationCout: besoin.estimationCout,
-                    exprimePar: besoin.exprimePar,
-                    dateValidation: dateValidationBesoinId,
-                    validePar: validation.validePar,
-                    lienCahierDesDharges: cahier.exemplaireNumerique,
-                    dateCreation: dateCreationBesoinId
-                };
-    
-                NewBesoin = await DimBesoinModel.create(newBesoin);
-            }
-
-            // -----------------------------------------------------
             if (marche.etape >= 5) {
                 const appel = await AppelDOffreModel.findById(marche.appelDOffreID);
-
-                const dateLancementAppelId = await findDimTempsId(appel.dateLancement);
-                const dateClotureAppelId = await findDimTempsId(appel.dateCloture);
-                const dateCreationAppelId = await findDimTempsId(appel.createdAt);
         
                 const newAppel = {
-                    dateLancement: dateLancementAppelId,
-                    dateCloture: dateClotureAppelId,
-                    mediasUtilises: appel.mediasUtilises,
-                    redacteurs: appel.redacteurs,
-                    dateCreation: dateCreationAppelId
+                    appelDOffreID: appel._id,
+                    dateLancement: appel.dateLancement,
+                    dateCloture: appel.dateCloture,
+                    mediasUtilises: appel.mediasUtilises
                 };
 
                 NewAppel = await DimAppelDOffreModel.create(newAppel);
             } 
 
             // --------------------------------------------------
+            if (marche.etape >= 6) {
+                offres = await OffreModel.find({marcheID: marche._id});
             if (marche.etape >= 8) {
-                const soumissionnaire = await SoumissionnaireModel.findById(marche.soumissionnaireID);
-                const offre = await OffreModel.findById(marche.offreID);
-    
-                const dateCreationOffreId = await findDimTempsId(offre.createdAt);
-     
-                const newOffre = {
-                    nomSoumissionnaire: soumissionnaire.nom,
-                    emailSoumissionnaire: soumissionnaire.email,
-                    telephoneSoumissionnaire: soumissionnaire.telephone,
-                    statutSoumissionnaire: soumissionnaire.statut,
-                    detailsProposition: offre.detailsProposition,
-                    noteObtenue: offre.noteObtenue,
-                    resultatEvaluation: offre.resultatEvaluation,
-                    motif: offre.motif,
-                    membresCommission: offre.membresCommission,
-                    dateCreation: dateCreationOffreId
-                };
-    
-                NewOffre = await DimOffreModel.create(newOffre);
-            }
+                await Promise.all(offres.map(async (offre) => {
+                    const soumissionnaire = await SoumissionnaireModel.findById(offre.soumissionnaireID);
+                    
+                    const newOffre = {
+                        offreID : offre._id,
+                        marcheID: marche._id,
+                        nomSoumissionnaire: soumissionnaire.nom,
+                        emailSoumissionnaire: soumissionnaire.email,
+                        telephoneSoumissionnaire: soumissionnaire.telephone,
+                        statutSoumissionnaire: soumissionnaire.statut,
+                        detailsProposition: offre.detailsProposition,
+                        criteres: offre.criteres,
+                        noteObtenue: offre.noteObtenue,
+                        resultatEvaluation: offre.resultatEvaluation,
+                        motif: offre.motif,
+                    };
+        
+                    await DimOffreModel.create(newOffre);
+                }))
+            }}
             
-            // --------------------------------------------------
+            // --------------- Le remplissage de la table dim-contrat ---------------
             if (marche.etape >= 9) {
                 const contrat = await ContratModel.findById(marche.contratID);
-    
-                const dateCreationContratId = await findDimTempsId(contrat.createdAt);
      
                 const newContrat = {
+                    contratID: contrat._id,
                     delaiRealisation: contrat.delaiRealisation,
                     cout: contrat.cout,
-                    statut: contrat.statut,
-                    observation: contrat.observation,
-                    signePar: contrat.signePar,
-                    dateCreation: dateCreationContratId
+                    statut: contrat.statut
                 };
     
                 NewContrat = await DimContratModel.create(newContrat);
             }
 
-            // ------------------------------------------------
-            const dateCreationMarcheId = await findDimTempsId(marche.createdAt);
+            // --------------- Le remplissage de la table fait-marche ---------------
+            const tempsID = await findTempsID(marche.createdAt);
+            const delaiSoumissionOffres = marche.etape >= 5 ? await calculerDelaiSoumissionOffres(NewAppel.dateCloture, NewAppel.dateLancement) : 0
+            const nombreOffresSoumises = marche.etape >= 6 ? offres.length : 0
+            const coutMoyenneOffres = marche.etape >= 6 ? calculerMoyenneCoutPropose(offres) : 0
+            const noteMoyenneOffres = marche.etape >= 7 ? calculerNoteMoyenneOffres(offres) : 0
+            const montantMarche = marche.etape >= 9 ? NewContrat.cout : 0
      
             const newMarche = {
+                marcheID: marche._id,
                 intitule: marche.intitule,
                 description: marche.description,
-                besoinID: marche.etape >= 4 ? NewBesoin._id : "",
-                appelDOffreID: marche.etape >= 5 ? NewAppel._id : "",
-                offreID: marche.etape >= 8 ? NewOffre._id : "",
-                contratID: marche.etape >= 9 ? NewContrat._id : "",
-                dateCreation: dateCreationMarcheId
+
+                appelDOffreID: marche.etape >= 5 ? NewAppel.appelDOffreID : "",
+                contratID: marche.etape >= 9 ? NewContrat.contratID : "",
+                tempsID,
+
+                delaiSoumissionOffres,
+                nombreOffresSoumises,
+                coutMoyenneOffres,
+                noteMoyenneOffres,
+                montantMarche
             };
 
             await FaitMarcheModel.create(newMarche);
+            
         }));
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+        
+        console.log('DataWarehouse filled successfully');
+        return res.status(200).json({ message: "DataWarehouse filled successfully" })
+    } catch (err) {
+        return res.status(500).json({ 
+            message: "Internal Server Error",
+            error: err 
+        })
     }
 });
 

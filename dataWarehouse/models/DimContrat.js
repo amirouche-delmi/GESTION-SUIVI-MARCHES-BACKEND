@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 
 const dimContratSchema = new mongoose.Schema({
+    contratID: {
+        type: String
+    },
     delaiRealisation: { 
         type: String, 
         required: true,
@@ -13,22 +16,9 @@ const dimContratSchema = new mongoose.Schema({
     statut: { 
         type: String, 
         required: true,
-        enum: ["actif", "terminé", "annulé"] 
-    },
-    observation: { 
-        type: String, 
-        required: true,
-        trim: true 
-    },
-    signePar: { 
-        type: [String],
-        required: true, 
-        trim: true
-    },
-    dateCreation: {
-        type: String
-    }        
-})
+        enum: ["En cours", "Terminé", "Annulé"]  
+    }     
+});
 
 const DimContratModel = mongoose.model('dim-contrat', dimContratSchema)
 

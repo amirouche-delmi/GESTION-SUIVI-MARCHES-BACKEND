@@ -1,27 +1,23 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const dimAppelDOffreSchema = new mongoose.Schema({
-    dateLancement: { 
+    appelDOffreID: {
         type: String
     },
-    dateCloture: { 
-        type: String
+    dateLancement: {
+        type: Date,
+        required: true
     },
-    mediasUtilises: { 
-        type: [String], 
-        required: true,
-        trim: true 
+    dateCloture: {
+        type: Date,
+        required: true
     },
-    redacteurs: { 
+    mediasUtilises: {
         type: [String],
-        required: true, 
-        trim: true
+        required: true
     },
-    dateCreation: {
-        type: String
-    }       
-})
+});
 
-const DimAppelDOffreModel = mongoose.model('dim-appel-d-offre', dimAppelDOffreSchema)
+const DimAppelDOffreModel = mongoose.model('dim-appel-d-offre', dimAppelDOffreSchema);
 
 module.exports = DimAppelDOffreModel;

@@ -1,0 +1,45 @@
+FaitMarché (
+    - codeMarché : int          PK
+    - intitulé : String
+    - description : String
+    - codeAppelDOffre : int     FK
+    - codeContrat : int         FK
+    - codeTemps : int           FK
+    delaiSoumissionOffres (calculée à partir de DimAppelDOffre)
+    nombreOffresSoumises (calculée à partir de DimOffre)
+    coutMoyenneOffres (calculée à partir de DimOffre)
+    noteMoyenneOffres (calculée à partir de DimOffre)
+    montantMarché (calculée à partir de DimContrat)
+)
+DimAppelDOffre (
+    - codeAppelDOffre : int     PK
+    - dateLancement : Date  
+    - dateCloture :  Date 
+    - mediasUtilises : String 
+)
+DimOffre (
+    - codeOffre : int                   PK
+    - nomSoumissionnaire : String 
+    - emailSoumissionnaire : String
+    - telephoneSoumissionnaire : String
+    - statutSoumissionnaire : String 
+    - detailsProposition : String
+    - criteres: String
+    - noteObtenue : int 
+    - resultatEvaluation : String
+    - motif : String 
+)
+DimContrat (
+    - codeContrat : int             PK
+    - delaiRealisation : String
+    - coût : int
+    - statut : String 
+)
+DimTemps (
+    - codeTemps : int               PK 
+    - jour : int
+    - libelléJour : String
+    - mois : int
+    - libelléMois : String
+    - année : String
+)

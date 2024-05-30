@@ -1,6 +1,12 @@
 const mongoose = require('mongoose')
 
 const dimOffreSchema = new mongoose.Schema({
+    offreID: {
+        type: String
+    },
+    marcheID: {
+        type: String
+    },
     nomSoumissionnaire: { 
         type: String, 
         required: true,
@@ -29,6 +35,13 @@ const dimOffreSchema = new mongoose.Schema({
         type: String, 
         required: true,
         trim: true 
+    },       
+    criteres: {
+        type: [{
+            nom: {type: String}, 
+            note: {type: Number}, 
+            poids: {type: Number}, 
+        }]
     },
     noteObtenue: { 
         type: Number, 
@@ -37,22 +50,14 @@ const dimOffreSchema = new mongoose.Schema({
     resultatEvaluation: { 
         type: String, 
         required: true,
-        enum: ['accepte', 'rejete']
+        enum: ['Accepte', 'Rejete']
     },
     motif: { 
         type: String, 
         required: true,
         trim: true 
-    },
-    membresCommission: { 
-        type: [String], 
-        required: true,
-        trim: true
-    },
-    dateCreation: {
-        type: String
-    }      
-})
+    },      
+});
 
 const DimOffreModel = mongoose.model('dim-offre', dimOffreSchema)
 

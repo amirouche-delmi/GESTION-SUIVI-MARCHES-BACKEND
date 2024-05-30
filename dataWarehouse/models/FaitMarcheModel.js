@@ -1,36 +1,23 @@
+
+// --------------- Le modele de la table fait-marche ---------------
 const mongoose = require('mongoose')
 
 const faitMarcheSchema = new mongoose.Schema({
-    intitule: { 
-        type: String, 
-        required: true,
-        trim: true
-    },
-    description: { 
-        type: String, 
-        required: true,
-        trim: true
-    },
-    besoinID: { 
-        type: String, 
-        trim: true
-    },
-    appelDOffreID: { 
-        type: String, 
-        trim: true
-    },
-    offreID: { 
-        type: String, 
-        trim: true
-    },
-    contratID: { 
-        type: String, 
-        trim: true
-    },
-    dateCreation: {
-        type: String
-    }         
-})
+    marcheID: { type: String },
+    intitule: { type: String, required: true, trim: true },
+    description: { type: String, required: true, trim: true },
+
+    appelDOffreID: { type: String },
+    contratID: { type: String },
+    tempsID: { type: String },
+
+    delaiSoumissionOffres: { type: Number }, 
+    nombreOffresSoumises: { type: Number }, 
+    coutMoyenneOffres: { type: Number }, 
+    noteMoyenneOffres: { type: Number }, 
+    montantMarche: { type: Number }, 
+
+});
 
 const FaitMarcheModel = mongoose.model('fait-marche', faitMarcheSchema)
 
