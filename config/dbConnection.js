@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
 
 mongoose
-    .connect("mongodb+srv://" + process.env.DB_USER_PASS + "@gestion-suivi-marches.lctzovu.mongodb.net/gestion-suivi-marches", {
+    .connect('mongodb://127.0.0.1:27017/gestion-suivi-marches', {
+    // .connect("mongodb+srv://" + process.env.DB_USER_PASS + "@gestion-suivi-marches.lctzovu.mongodb.net/gestion-suivi-marches", {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
@@ -10,4 +11,3 @@ mongoose
         console.log("Connected to MongoDB");
     }) 
     .catch((err) => console.log("Failed to connect to MongoDB", err));
- 
